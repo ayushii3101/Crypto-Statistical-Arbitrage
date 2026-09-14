@@ -1,0 +1,13 @@
+ccxt
+pandas
+numpy
+scipy
+statsmodels
+scikit-learn
+numba
+matplotlib
+polars
+pybind11
+pyyaml
+python-dotenv
+tqdm
