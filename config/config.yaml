@@ -1,0 +1,83 @@
+project:
+  name: "crypto_stat_arb"
+  version: "0.2.0"
+  random_seed: 42
+
+market_data:
+  assets: ["BTC-USDT", "ETH-USDT", "SOL-USDT"]
+  exchanges: ["binance", "bybit"]
+  start_date: "2023-10-19"
+  end_date: "2025-04-19"
+  interval: "1m"
+  lookback_days: 30
+
+cointegration:
+  method: "johansen"
+  window_days: 30
+  significance_level: 0.10
+  max_lags: 5
+  min_observations: 100
+  cases:
+    BTC-ETH:     ["BTC-USDT", "ETH-USDT"]
+    BTC-SOL:     ["BTC-USDT", "SOL-USDT"]
+    ETH-SOL:     ["ETH-USDT", "SOL-USDT"]
+    BTC-ETH-SOL: ["BTC-USDT", "ETH-USDT", "SOL-USDT"]
+  max_simultaneous_spreads: 2
+
+kalman:
+  initial_state_mean: 0.0
+  initial_state_covariance: 1.0
+  observation_noise: 0.1
+  process_noise: 0.01
+  update_frequency: "1d"
+
+bocpd:
+  hazard_rate: 0.01
+  threshold_probability: 0.5
+  min_regime_length: 20
+
+signals:
+  entry_z: 2.0
+  exit_z: 0.5
+  max_holding_period_days: 5
+  min_half_life_days: 1
+  max_half_life_days: 15
+
+costs:
+  maker_fee: 0.0002
+  taker_fee: 0.0005
+  slippage_bps: 2
+  funding_rate_interval_hours: 8
+
+portfolio:
+  initial_capital: 100000
+  max_position_pct: 0.2
+  max_drawdown_pct: 0.15
+  max_open_trades: 3
+  max_simultaneous_spreads: 2
+  max_single_asset_exposure: 1.5
+
+backtest:
+  walk_forward_train_days: 30
+  walk_forward_test_days: 7
+  warmup_periods: 100
+
+evaluation:
+  permutation_trials: 1000
+  benchmark_strategies: ["static_ou", "momentum"]
+  risk_free_rate: 0.05
+
+paths:
+  raw_data_dir: "data/raw/"
+  processed_data_dir: "data/processed/"
+  log_dir: "logs/"
+  results_dir: "results/"
+
+cpp:
+  module_path: "src/cpp/build/spread_engine"
+  use_cpp: true
+  fallback_to_python: true
+
+logging:
+  level: "INFO"
+  log_to_file: true
